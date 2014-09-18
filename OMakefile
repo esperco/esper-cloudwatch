@@ -1,0 +1,16 @@
+# Send event data points to our gator host, which aggregates them and
+# sends them to Cloudwatch
+
+OCAML_LIBS = $(OCAML_LIBS_cloudwatch)
+
+FILES[] =
+  cloudwatch
+
+OCamlLibrary(cloudwatch, $(FILES))
+Meta(cloudwatch)
+
+.DEFAULT: META cloudwatch.cma cloudwatch.cmxa
+
+.PHONY: clean
+clean:
+	rm -f *.o *.a *.cm* *~ *.annot *.run *.opt META
