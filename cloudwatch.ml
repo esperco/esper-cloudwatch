@@ -1,3 +1,5 @@
+open Lwt
+
 (*
    Send a (key, value) pair to Amazon Cloudwatch via our gator service,
    which sums up values over 1-min periods before sending them to Cloudwatch.
@@ -16,3 +18,15 @@ let send key value =
     ~host: conf.gator_host
     ~port: conf.gator_port
     key value
+
+let send_event key = send key 1.0
+
+(*
+   Measure a latency and send it to Cloudwatch.
+*)
+let time key f =
+  let t1 = Unix.gettimeofday () in
+  f () >>= fun result ->
+  let t2 = Unix.gettimeofday () in
+  send key (t2 -. t1) >>= fun () ->
+  return result
