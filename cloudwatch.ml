@@ -3,10 +3,13 @@ open Lwt
 let send0 key opt_value =
   let conf = Config.get () in
   let open Config_t in
+(*
   Gator_client.send
     ~host: conf.gator_host
     ~port: conf.gator_port
     key opt_value
+*)
+  return ()
 
 (*
    Send a (key, value) pair to Amazon Cloudwatch via our gator service,
