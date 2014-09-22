@@ -1,15 +1,26 @@
 open Lwt
 
-let send0 key opt_value =
+(* Ensure that we don't evaluate this before the config is loaded. *)
+let gator_send = lazy (
   let conf = Config.get () in
   let open Config_t in
-(*
-  Gator_client.send
+  Gator_client.make_send
     ~host: conf.gator_host
     ~port: conf.gator_port
-    key opt_value
-*)
-  return ()
+    ()
+)
+
+let send0 key opt_value =
+  catch
+    (fun () ->
+       (Lazy.force gator_send) key opt_value
+    )
+    (fun e ->
+       let s = Log.string_of_exn e in
+       Log.logf `Error "Gator_client.send failed with exception %s" s;
+       return ()
+    )
+
 
 (*
    Send a (key, value) pair to Amazon Cloudwatch via our gator service,
