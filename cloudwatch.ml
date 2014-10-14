@@ -40,11 +40,23 @@ let send_event key =
   send0 key None
 
 (*
-   Measure a latency and send it to Cloudwatch.
+   Measure a latency of a computation and send it to Cloudwatch.
+   If the computation results in an exception, the ".exn" suffix is
+   appended to the key.
 *)
 let time key f =
   let t1 = Unix.gettimeofday () in
-  f () >>= fun result ->
-  let t2 = Unix.gettimeofday () in
-  send key (t2 -. t1) >>= fun () ->
-  return result
+  let finally key =
+    let t2 = Unix.gettimeofday () in
+    send key (t2 -. t1)
+  in
+  catch
+    (fun () ->
+       f () >>= fun result ->
+       finally key >>= fun () ->
+       return result
+    )
+    (fun e ->
+       finally (key ^ ".exn") >>= fun () ->
+       raise e
+    )
