@@ -36,8 +36,9 @@ let send0 key opt_value =
 let send key value =
   send0 key (Some value)
 
-let send_event key =
-  send0 key None
+let send_event ?(n=1) key =
+  let l = Array.to_list (Array.make n ()) in
+  Lwt_list.iter_p (fun () -> send0 key None) l
 
 (*
    Measure a latency of a computation and send it to Cloudwatch.
