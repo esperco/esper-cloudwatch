@@ -1,7 +1,7 @@
 open Lwt
 
 (* Ensure that we don't evaluate this before the config is loaded. *)
-let gator_send = lazy (
+let gator_send = Util_half_lazy.create (fun () ->
   let conf = Config.get () in
   let open Config_t in
   Gator_client.make_send
@@ -13,7 +13,7 @@ let gator_send = lazy (
 let send0 key opt_value =
   catch
     (fun () ->
-       (Lazy.force gator_send) key opt_value
+       (gator_send ()) key opt_value
     )
     (fun e ->
        let s = Log.string_of_exn e in
