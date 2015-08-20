@@ -34,6 +34,7 @@ let send0 key opt_value =
    The value must be greater than or equal to 0.
 *)
 let send key value =
+  Perf.add_latency key value;
   send0 key (Some value)
 
 let send_event ?(n=1) key =
