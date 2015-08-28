@@ -60,5 +60,5 @@ let time key f =
     )
     (fun e ->
        finally (key ^ ".exn") >>= fun () ->
-       raise e
+       Util_exn.reraise e
     )
