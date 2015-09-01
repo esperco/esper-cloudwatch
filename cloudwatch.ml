@@ -60,5 +60,5 @@ let time key f =
     )
     (fun e ->
        finally (key ^ ".exn") >>= fun () ->
-       Util_exn.reraise e
+       Trax.raise __LOC__ e
     )
