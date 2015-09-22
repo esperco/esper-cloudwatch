@@ -3,7 +3,7 @@ open Lwt
 (* Ensure that we don't evaluate this before the config is loaded. *)
 let gator_send = Util_half_lazy.create (fun () ->
   let conf = Config.get () in
-  let open Config_t in
+  let open Conf_t in
   Gator_client.make_send
     ~host: conf.gator_host
     ~port: conf.gator_port
