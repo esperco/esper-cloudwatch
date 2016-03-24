@@ -46,8 +46,7 @@ let send_event ?(n=1) key =
    If the computation results in an exception, the ".exn" suffix is
    appended to the key.
 *)
-let time key f =
-  let t1 = Unix.gettimeofday () in
+let time ?(t1 = Unix.gettimeofday ()) key f =
   let finally key =
     let t2 = Unix.gettimeofday () in
     send key (t2 -. t1)
