@@ -42,6 +42,27 @@ let send_event ?(n=1) key =
   Lwt_list.iter_p (fun () -> send0 key None) l
 
 (*
+   Report successful and failed outcomes of a function
+   as two different sets of Cloudwatch metrics.
+   If the computation results in an exception, the ".exn" suffix is
+   appended to the key.
+*)
+let report key f =
+  let finally key =
+    send_event key
+  in
+  catch
+    (fun () ->
+       f () >>= fun result ->
+       finally key >>= fun () ->
+       return result
+    )
+    (fun e ->
+       finally (key ^ ".exn") >>= fun () ->
+       Trax.raise __LOC__ e
+    )
+
+(*
    Measure a latency of a computation and send it to Cloudwatch.
    If the computation results in an exception, the ".exn" suffix is
    appended to the key.
