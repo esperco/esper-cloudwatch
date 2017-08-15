@@ -8,4 +8,5 @@ It won't build as is but most of the code was used in production.
 Description
 -----------
 
-Sorry, no description yet :cry:
+Send Cloudwatch-compatible data to https://github.com/esperco/esper-gator, an 
+aggregator that sends metric data to Cloudwatch every minute.
